@@ -1,7 +1,6 @@
-left_motor:
+/**:
   vesc_driver_node:
     ros__parameters:
-      port: "/dev/ttyACM0"
       brake_max: 200000.0
       brake_min: -20000.0
       current_max: 10.0
@@ -13,17 +12,21 @@ left_motor:
       speed_max: 2000.0
       speed_min: -2000.0
 
+left_motor:
+  vesc_driver_node:
+    ros__parameters:
+      port: "/dev/ttyACM0"
+
+
 right_motor:
   vesc_driver_node:
     ros__parameters:
       port: "/dev/ttyACM1"
-      brake_max: 200000.0
-      brake_min: -20000.0
-      current_max: 10.0
-      current_min: 0.0
-      duty_cycle_max: 0.0
-      duty_cycle_min: 0.0
-      position_max: 0.0
-      position_min: 0.0
-      speed_max: 2000.0
-      speed_min: -2000.0
+
+vesc_diff_drive_node:
+  ros__parameters:
+    wheel_separation: 1.0
+    wheel_radius: 0.25
+    rpm_to_ERPM: 7.0
+    gear_ratio: 5.0
+
