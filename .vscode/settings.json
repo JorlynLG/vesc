@@ -1,0 +1,7 @@
+{
+    "cmake.sourceDirectory": "/home/jlegarrec/Documents/Projects/vesc_ws/src/vesc/vesc",
+    "files.associations": {
+        "cmath": "cpp",
+        "complex": "cpp"
+    }
+}
