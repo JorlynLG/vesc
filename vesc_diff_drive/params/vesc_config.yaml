@@ -20,12 +20,13 @@
 left_motor:
   vesc_driver_node:
     ros__parameters:
-      port: "/dev/ttyACM0"
-
+      #port: "/dev/ttyACM0"
+      motor_uuid: "3e0019-001651-343037-353633"
 right_motor:
   vesc_driver_node:
     ros__parameters:
-      port: "/dev/ttyACM1"
+      #port: "/dev/ttyACM1"
+      motor_uuid: "3e0047-001551-343037-353633"
 
     # <param name="speed_to_erpm_gain" value="1.0" />
     # <param name="speed_to_erpm_offset" value="0.0" />

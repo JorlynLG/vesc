@@ -19,7 +19,7 @@ using vesc_msgs::msg::VescStateStamped;
 class VescToOdom : public rclcpp::Node
 {
 public:
-  explicit VescToOdom(const rclcpp::NodeOptions & options);
+    explicit VescToOdom(const rclcpp::NodeOptions & options);
 
 private:
     // ROS parameters
@@ -51,6 +51,9 @@ private:
     void vescStateCallbackLeft(const VescStateStamped::SharedPtr state);
     void vescStateCallbackRight(const VescStateStamped::SharedPtr state);
     rclcpp::TimerBase::SharedPtr odom_timer_;
+
+    void publishOdom();
+
 };
 
 }  // namespace vesc_diff_drive

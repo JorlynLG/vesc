@@ -25,6 +25,7 @@ ament_auto_add_library(${PROJECT_NAME} SHARED
   src/vesc_interface.cpp
   src/vesc_packet.cpp
   src/vesc_packet_factory.cpp
+  src/vesc_device_uuid_lookup.cpp
 )
 target_link_libraries(${PROJECT_NAME}
   ${CMAKE_THREAD_LIBS_INIT}

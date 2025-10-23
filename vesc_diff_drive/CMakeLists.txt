@@ -22,6 +22,7 @@ find_package(Threads)
 # node library
 ament_auto_add_library(${PROJECT_NAME} SHARED
   src/diff_drive_to_vesc.cpp
+  src/vesc_to_odom.cpp
 )
 target_link_libraries(${PROJECT_NAME}
   ${CMAKE_THREAD_LIBS_INIT}
@@ -29,6 +30,11 @@ target_link_libraries(${PROJECT_NAME}
 rclcpp_components_register_node(${PROJECT_NAME}
   PLUGIN vesc_diff_drive::DiffDriveToVesc
   EXECUTABLE ${PROJECT_NAME}_node
+)
+
+rclcpp_components_register_node(${PROJECT_NAME}
+  PLUGIN vesc_diff_drive::VescToOdom
+  EXECUTABLE vesc_to_odom_node
 )
 
 #############

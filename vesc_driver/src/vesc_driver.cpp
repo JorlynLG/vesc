@@ -29,6 +29,7 @@
 // -*- mode:c++; fill-column: 100; -*-
 
 #include "vesc_driver/vesc_driver.hpp"
+#include "vesc_driver/vesc_device_uuid_lookup.hpp"
 
 #include <vesc_msgs/msg/vesc_state.hpp>
 #include <vesc_msgs/msg/vesc_state_stamped.hpp>
@@ -67,7 +68,41 @@ VescDriver::VescDriver(const rclcpp::NodeOptions & options)
 {
   // get vesc serial port address
   std::string port = declare_parameter<std::string>("port", "");
+  std::string motor_uuid = declare_parameter<std::string>("motor_uuid", "");
 
+  if (port == ""){
+    RCLCPP_INFO(get_logger(), "Port not available, checking UUID");
+
+    std::vector<std::string> ports = {"/dev/ttyACM0", "/dev/ttyACM1", "/dev/ttyACM2"};
+    for (const auto& port_option : ports){
+      try {
+        vesc_driver::VescDeviceLookup vesc_lookup(port_option);
+        int count = 0;
+        while (!vesc_lookup.isReady() && count < 200){
+          std::this_thread::sleep_for(std::chrono::milliseconds(10));       
+          ++count;
+        }
+        std::string UUID_option = vesc_lookup.deviceUUID();
+        RCLCPP_INFO(get_logger(), "UUID found:  %s", UUID_option.c_str());
+
+        if (UUID_option == motor_uuid){
+          RCLCPP_INFO(get_logger(), "Port found through UUID");
+          port = port_option;
+          break;
+        }
+        vesc_lookup.close();
+      } catch (SerialException e) {
+        RCLCPP_INFO(get_logger(), "Port was unable to connect:  %s, with error code: %s", port_option.c_str(), e.what());
+        continue;
+      }
+
+    }
+    if (port == ""){
+      RCLCPP_FATAL(get_logger(), "No ports found");
+      rclcpp::shutdown();      
+    }
+  }
+  
   // attempt to connect to the serial port
   try {
     vesc_.connect(port);
@@ -76,6 +111,7 @@ VescDriver::VescDriver(const rclcpp::NodeOptions & options)
     rclcpp::shutdown();
     return;
   }
+
 
   // create vesc state (telemetry) publisher
   state_pub_ = create_publisher<VescStateStamped>("sensors/core", rclcpp::QoS{10});

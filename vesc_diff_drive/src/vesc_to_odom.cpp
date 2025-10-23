@@ -47,9 +47,7 @@ VescToOdom::VescToOdom(const rclcpp::NodeOptions & options)
     odom_pub_ = create_publisher<Odometry>("odom", 10);
 
     // create tf broadcaster
-    if (publish_tf_) {
-        tf_pub_.reset(new tf2_ros::TransformBroadcaster(this));
-    }
+    tf_pub_.reset(new tf2_ros::TransformBroadcaster(this));
 
     // subscribe to vesc state
     vesc_state_left_sub_ = create_subscription<VescStateStamped>(
@@ -85,6 +83,7 @@ void VescToOdom::vescStateCallbackRight(const VescStateStamped::SharedPtr state)
 }
 
 void VescToOdom::publishOdom()
+{
     // calc elapsed time
     auto now = this->now();
     double dt = (now - last_time_).seconds();
@@ -127,22 +126,17 @@ void VescToOdom::publishOdom()
     // Velocity uncertainty
     /** @todo Think about velocity uncertainty */
 
-    if (publish_tf_) {
-        TransformStamped tf;
-        tf.header.frame_id = odom_frame_;
-        tf.child_frame_id = base_frame_;
-        tf.header.stamp = now;
-        tf.transform.translation.x = x_;
-        tf.transform.translation.y = y_;
-        tf.transform.translation.z = 0.0;
-        tf.transform.rotation = odom.pose.pose.orientation;
-
-        if (rclcpp::ok()) {
-        tf_pub_->sendTransform(tf);
-        }
-    }
+    TransformStamped tf;
+    tf.header.frame_id = odom_frame_;
+    tf.child_frame_id = base_frame_;
+    tf.header.stamp = now;
+    tf.transform.translation.x = x_;
+    tf.transform.translation.y = y_;
+    tf.transform.translation.z = 0.0;
+    tf.transform.rotation = odom.pose.pose.orientation;
 
     if (rclcpp::ok()) {
+        tf_pub_->sendTransform(tf);
         odom_pub_->publish(odom);
     }
     last_time_ = now;
