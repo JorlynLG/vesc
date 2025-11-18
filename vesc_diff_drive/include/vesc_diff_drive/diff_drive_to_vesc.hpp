@@ -3,13 +3,13 @@
 
 #include <geometry_msgs/msg/twist_stamped.hpp>
 #include <rclcpp/rclcpp.hpp>
-#include <vesc_msgs/msg/float64_stamped.hpp>
+#include <std_msgs/msg/float64.hpp>
 
 namespace vesc_diff_drive
 {
 
 using geometry_msgs::msg::TwistStamped;
-using vesc_msgs::msg::Float64Stamped;
+using std_msgs::msg::Float64;
 
 class DiffDriveToVesc : public rclcpp::Node
 {
@@ -25,8 +25,8 @@ private:
     double speed_conversion_;
 
     // ROS publishers + subscribers
-    rclcpp::Publisher<Float64Stamped>::SharedPtr left_motor_pub_;
-    rclcpp::Publisher<Float64Stamped>::SharedPtr right_motor_pub_;
+    rclcpp::Publisher<Float64>::SharedPtr left_motor_pub_;
+    rclcpp::Publisher<Float64>::SharedPtr right_motor_pub_;
     rclcpp::Subscription<TwistStamped>::SharedPtr twist_sub_;
 
     // ROS callbacks
