@@ -1,6 +1,6 @@
 #include "vesc_diff_drive/diff_drive_to_vesc.hpp"
-#include <geometry_msgs/msg/twist.hpp>
-#include <std_msgs/msg/float64.hpp>
+#include <geometry_msgs/msg/twist_stamped.hpp>
+#include <vesc_msgs/msg/float64_stamped.hpp>
 
 #include <cmath>
 #include <sstream>
@@ -9,9 +9,10 @@
 namespace vesc_diff_drive
 {
 
-using geometry_msgs::msg::Twist;
+using geometry_msgs::msg::TwistStamped;
 using std::placeholders::_1;
-using std_msgs::msg::Float64;
+using vesc_msgs::msg::Float64Stamped;
+
 
 DiffDriveToVesc::DiffDriveToVesc(const rclcpp::NodeOptions & options)
 :   Node("diff_drive_to_vesc_node", options)
@@ -31,22 +32,26 @@ DiffDriveToVesc::DiffDriveToVesc(const rclcpp::NodeOptions & options)
     speed_conversion_ = rpm_to_ERPM_ * gear_ratio_ * 60 / (2 * M_PI * wheel_radius_);
 
     // create publishers to vesc electric-RPM (speed) and servo commands
-    left_motor_pub_ = create_publisher<Float64>("left_motor/commands/motor/speed", 10);
-    right_motor_pub_ = create_publisher<Float64>("right_motor/commands/motor/speed", 10);
+    left_motor_pub_ = create_publisher<Float64Stamped>("left_motor/commands/motor/speed", 10);
+    right_motor_pub_ = create_publisher<Float64Stamped>("right_motor/commands/motor/speed", 10);
 
     // subscribe to ackermann topic
-    twist_sub_ = create_subscription<Twist>(
+    twist_sub_ = create_subscription<TwistStamped>(
         "cmd_vel", 10, std::bind(&DiffDriveToVesc::diffDriveCmdCallback, this, _1));
 }
 
-void DiffDriveToVesc::diffDriveCmdCallback(const Twist::SharedPtr cmd)
+void DiffDriveToVesc::diffDriveCmdCallback(const TwistStamped::SharedPtr cmd)
 {
-    Float64 left_motor_msg;
-    Float64 right_motor_msg;
-    
+    vesc_msgs::msg::Float64Stamped left_motor_msg;
+    vesc_msgs::msg::Float64Stamped right_motor_msg;
+
+    // Add timestamps
+    left_motor_msg.header.stamp = this->now();
+    right_motor_msg.header.stamp = this->now();
+
     // calc vesc electric RPM (speed)
-    left_motor_msg.data = speed_conversion_*(cmd->linear.x - cmd->angular.z*wheel_separation_/2.0);
-    right_motor_msg.data = speed_conversion_*(cmd->linear.x + cmd->angular.z*wheel_separation_/2.0);
+    left_motor_msg.data = speed_conversion_*(cmd->twist.linear.x - cmd->twist.angular.z*wheel_separation_/2.0);
+    right_motor_msg.data = speed_conversion_*(cmd->twist.linear.x + cmd->twist.angular.z*wheel_separation_/2.0);
 
     // publish
     if (rclcpp::ok()) {
