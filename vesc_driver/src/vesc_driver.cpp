@@ -217,7 +217,10 @@ void VescDriver::vescPacketCallback(const std::shared_ptr<VescPacket const> & pa
 
     state_msg.state.pid_pos_now = values->pid_pos_now();
     state_msg.state.controller_id = values->controller_id();
-
+    
+    state_msg.state.temp_fet = values->temp_fet();
+    state_msg.state.temp_motor = values->temp_motor(); 
+    
     state_msg.state.ntc_temp_mos1 = values->temp_mos1();
     state_msg.state.ntc_temp_mos2 = values->temp_mos2();
     state_msg.state.ntc_temp_mos3 = values->temp_mos3();
