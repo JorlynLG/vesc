@@ -45,13 +45,13 @@ def generate_launch_description():
     )
 
     #Start Odometry publisher
-    odom_node = Node(
-        package='vesc_diff_drive',
-        executable='vesc_to_odom_node',
-        name='vesc_to_odom_node',
-        parameters=[LaunchConfiguration("config")],
-        output='screen'           
-    )
+    # odom_node = Node(
+    #     package='vesc_diff_drive',
+    #     executable='vesc_to_odom_node',
+    #     name='vesc_to_odom_node',
+    #     parameters=[LaunchConfiguration("config")],
+    #     output='screen'           
+    # )
 
     return LaunchDescription([
         DeclareLaunchArgument(
