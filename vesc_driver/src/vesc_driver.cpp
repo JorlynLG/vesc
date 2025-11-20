@@ -140,7 +140,7 @@ VescDriver::VescDriver(const rclcpp::NodeOptions & options)
     "commands/servo/position", rclcpp::QoS{10}, std::bind(&VescDriver::servoCallback, this, _1));
 
   // create a 50Hz timer, used for state machine & polling VESC telemetry
-  timer_ = create_wall_timer(20ms, std::bind(&VescDriver::timerCallback, this));
+  timer_ = create_wall_timer(200ms, std::bind(&VescDriver::timerCallback, this));
 }
 
 /* TODO or TO-THINKABOUT LIST
@@ -183,7 +183,7 @@ void VescDriver::timerCallback()
     // poll for vesc state (telemetry)
     vesc_.requestState();
     // poll for vesc imu
-    vesc_.requestImuData();
+    //vesc_.requestImuData();
   } else {
     // unknown mode, how did that happen?
     assert(false && "unknown driver mode");
